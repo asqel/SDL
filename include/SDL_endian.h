@@ -29,6 +29,8 @@
 #define SDL_endian_h_
 
 #include "SDL_stdinc.h"
+#include "SDL_config_profanOS.h"
+#define SDL_BYTEORDER 1234
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1400)
 /* As of Clang 11, '_m_prefetchw' is conflicting with the winnt.h's version,

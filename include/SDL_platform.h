@@ -28,6 +28,8 @@
 #ifndef SDL_platform_h_
 #define SDL_platform_h_
 
+
+
 #if defined(_AIX)
 #undef __AIX__
 #define __AIX__     1
@@ -68,6 +70,14 @@
 #if defined(__NGAGE__)
 #undef __NGAGE__
 #define __NGAGE__ 1
+#endif
+#ifdef __profanOS__
+#define SDL_BYTEORDER 1234
+   #undef __profanOS__
+   #define __profanOS__ 1
+   #ifdef __LINUX__
+      #undef __LINUX__
+   #endif
 #endif
 
 #if defined(__APPLE__)

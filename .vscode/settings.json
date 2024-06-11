@@ -1,0 +1,21 @@
+{
+	"files.associations": {
+		"close_code.h": "c",
+		"sdl_config_profanos.h": "c",
+		"sdl_platform.h": "c",
+		"begin_code.h": "c",
+		"sdl_windows.h": "c",
+		"strings.h": "c",
+		"sdl_internal.h": "c",
+		"sdl_config.h": "c",
+		"filesys.h": "c",
+		"sdl_filesystem.h": "c",
+		"syscall.h": "c",
+		"limits.h": "c",
+		"cmath": "c",
+		"math_libm.h": "c",
+		"math.h": "c",
+		"yuv_rgb.h": "c",
+		"yuv_rgb_std.h": "c"
+	}
+}

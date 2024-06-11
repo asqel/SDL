@@ -43,7 +43,9 @@
 #include "TargetConditionals.h"
 #endif
 
-#if defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE /* probably not useful on iOS. */
+#ifdef __profanOS__
+#define SDL_DYNAMIC_API 0
+#elif defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE /* probably not useful on iOS. */
 #define SDL_DYNAMIC_API 0
 #elif defined(__ANDROID__) /* probably not useful on Android. */
 #define SDL_DYNAMIC_API 0

@@ -27,6 +27,8 @@
 
 #ifdef __WIN32__
 #include "../core/windows/SDL_windows.h"
+#elif defined(__profanOS__)
+//dont
 #else
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -60,6 +62,8 @@ static Uint64 GetFileModificationTime(const char *file)
         }
         SDL_free(wFile);
     }
+#elif defined(__profanOS__)
+    return 0;
 #else
     struct stat sb;
 

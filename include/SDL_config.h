@@ -29,6 +29,8 @@
 /* Add any platform that doesn't build using the configure system. */
 #if defined(__WIN32__)
 #include "SDL_config_windows.h"
+#elif defined(__profanOS__)
+#include "SDL_config_profanOS.h"
 #elif defined(__WINRT__)
 #include "SDL_config_winrt.h"
 #elif defined(__WINGDK__)

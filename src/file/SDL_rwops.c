@@ -523,7 +523,7 @@ static int SDLCALL mem_close(SDL_RWops *context)
 
 /* Functions to create SDL_RWops structures from various data sources */
 
-#if defined(HAVE_STDIO_H) && !(defined(__WIN32__) || defined(__GDK__))
+#if defined(HAVE_STDIO_H) && !(defined(__WIN32__) || defined(__GDK__)) && !defined(__profanOS__)
 static SDL_bool IsRegularFileOrPipe(FILE *f)
 {
     #ifdef __WINRT__
