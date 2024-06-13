@@ -22,6 +22,7 @@ buildbot
 *.dll
 *.exe
 *.o
+*.elf
 *.obj
 *.res
 *.lib
