@@ -105,7 +105,7 @@
 #define SDL_THREADS_DISABLED    1
 
 /* Enable the stub timer support (src/timer/dummy/\*.c) */
-#define SDL_TIMERS_DISABLED 1
+#undef SDL_TIMERS_DISABLED
 
 /* disable the dummy video driver (src/video/dummy/\*.c) */
 #undef SDL_VIDEO_DRIVER_DUMMY
