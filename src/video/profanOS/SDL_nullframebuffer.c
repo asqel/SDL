@@ -20,7 +20,7 @@
 */
 #include "../../SDL_internal.h"
 
-#ifdef SDL_VIDEO_DRIVER_DUMMY
+#ifdef __profanOS__
 
 #include "../SDL_sysvideo.h"
 #include "SDL_nullframebuffer_c.h"
@@ -51,6 +51,11 @@ int SDL_DUMMY_CreateWindowFramebuffer(_THIS, SDL_Window *window, Uint32 *format,
     return 0;
 }
 
+extern uint32_t *profan_fb;
+extern uint32_t profan_pitch;
+extern uint32_t profan_height;
+extern uint32_t profan_width;
+
 int SDL_DUMMY_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect *rects, int numrects)
 {
     static int frame_number;
@@ -62,12 +67,20 @@ int SDL_DUMMY_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect 
     }
 
     /* Send the data to the display */
-    if (SDL_getenv("SDL_VIDEO_DUMMY_SAVE_FRAMES")) {
-        printf("LUOPDATE\n");
-        char file[128];
-        (void)SDL_snprintf(file, sizeof(file), "SDL_window%" SDL_PRIu32 "-%8.8d.bmp",
-                           SDL_GetWindowID(window), ++frame_number);
-        SDL_SaveBMP(surface, file);
+    if (1 || SDL_getenv("SDL_VIDEO_DUMMY_SAVE_FRAMES")) {
+        uint32_t width = surface->w;
+        uint32_t height = surface->h;
+        if (profan_width < width)
+            width = profan_width;
+        if (profan_height < height)
+            height = profan_height;
+        uint8_t *pixels = surface->pixels;
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                uint32_t idx = x*4 + y *surface->pitch;
+                profan_fb[x + y*profan_pitch] = (pixels[idx]) | (pixels[idx + 1] << 8) | (pixels[idx + 2] << 16);
+            }
+        }
     }
     return 0;
 }

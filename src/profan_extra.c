@@ -1,5 +1,8 @@
 #include <stdint.h>
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <profan/syscall.h>
 int64_t __divdi3(int64_t num, int64_t den) {
     return (int64_t) (((int32_t)num) / ((int32_t)den));
 }
@@ -58,4 +61,17 @@ double SDL_uclibc_sqrt(double x) {
 }
 double SDL_uclibc_tan(double x) {
     return tan(x);
+}
+
+uint32_t *profan_fb;
+uint32_t profan_pitch;
+uint32_t profan_height;
+uint32_t profan_width;
+
+void __attribute__((constructor)) __profan_sdl_init(void) {
+    setenv("SDL_VIDEODRIVER", "profan_vesa", 1);
+    profan_fb = c_vesa_get_fb();
+    profan_pitch = c_vesa_get_pitch();
+    profan_height = c_vesa_get_height();
+    profan_width = c_vesa_get_width();
 }

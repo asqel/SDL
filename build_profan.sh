@@ -13,12 +13,12 @@ rm sdl.elf
 mkdir -p $bins
 
 #files="$prefix/src/*.c $prefix/src/*/*.c $prefix/src/*/dummy/*.c"
-files="src/*.c src/atomic/*.c src/audio/*.c src/cpuinfo/*.c src/events/*.c src/file/*.c src/haptic/*.c src/joystick/*.c src/power/*.c src/render/*.c src/render/software/*.c src/stdlib/*.c src/thread/*.c src/timer/*.c src/video/*.c src/audio/disk/*.c src/audio/dummy/*.c src/filesystem/profanOS/*.c src/video/dummy/*.c src/haptic/dummy/*.c src/joystick/dummy/*.c src/main/dummy/*.c src/thread/generic/*.c src/timer/dummy/*.c src/loadso/dummy/*.c"
+files="src/*.c src/atomic/*.c src/audio/*.c src/cpuinfo/*.c src/events/*.c src/file/*.c src/haptic/*.c src/joystick/*.c src/power/*.c src/render/*.c src/render/software/*.c src/stdlib/*.c src/thread/*.c src/timer/*.c src/video/*.c src/audio/disk/*.c src/audio/dummy/*.c src/filesystem/profanOS/*.c src/video/profanOS/*.c src/haptic/dummy/*.c src/joystick/dummy/*.c src/main/dummy/*.c src/thread/generic/*.c src/timer/dummy/*.c src/loadso/dummy/*.c"
 count=0
 for i in $files; do
     if [[ "$i" != "$prefix/src/joystick/"* ]]; then
         echo "Compiling $i..."
-        $CC $CFLAGS -c $i -o $bins/$count.o 
+        $CC $CFLAGS -c $i -o $bins/$count.o
         if [ ! -f $bins/$count.o ]; then
             echo "Cannot compile $i"
             exit 1
@@ -28,7 +28,6 @@ for i in $files; do
     fi
     count=$((count + 1))
 done
-
 
 $LD $LDFLAGS -o libSDL2.elf $bins/*.o
 

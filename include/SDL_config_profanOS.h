@@ -107,11 +107,11 @@
 /* Enable the stub timer support (src/timer/dummy/\*.c) */
 #define SDL_TIMERS_DISABLED 1
 
-/* Enable the dummy video driver (src/video/dummy/\*.c) */
-#define SDL_VIDEO_DRIVER_DUMMY  1
+/* disable the dummy video driver (src/video/dummy/\*.c) */
+#undef SDL_VIDEO_DRIVER_DUMMY
 
-/* Enable the dummy filesystem driver (src/filesystem/dummy/\*.c) */
-#define SDL_FILESYSTEM_DUMMY  0
+/* disable the dummy filesystem driver (src/filesystem/dummy/\*.c) */
+#undef SDL_FILESYSTEM_DUMMY 
 
 #define SDL_BYTEORDER 1234
 

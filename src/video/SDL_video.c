@@ -145,6 +145,9 @@ static VideoBootStrap *bootstrap[] = {
     &DUMMY_evdev_bootstrap,
 #endif
 #endif
+#ifdef __profanOS__
+    &PROFANOS_bootstrap,
+#endif
     NULL
 };
 
@@ -433,6 +436,7 @@ const char *SDL_GetVideoDriver(int index)
 /*
  * Initialize the video and event subsystems -- determine native pixel format
  */
+#include <profan.h>
 int SDL_VideoInit(const char *driver_name)
 {
     SDL_VideoDevice *video;
@@ -502,8 +506,9 @@ int SDL_VideoInit(const char *driver_name)
             const char *driver_attempt_end = SDL_strchr(driver_attempt, ',');
             size_t driver_attempt_len = (driver_attempt_end) ? (driver_attempt_end - driver_attempt)
                                                                      : SDL_strlen(driver_attempt);
-
+            serial_debug("eeeeeee%d\n", sizeof(bootstrap)/sizeof(bootstrap[0]));
             for (i = 0; bootstrap[i]; ++i) {
+                
                 if ((driver_attempt_len == SDL_strlen(bootstrap[i]->name)) &&
                     (SDL_strncasecmp(bootstrap[i]->name, driver_attempt, driver_attempt_len) == 0)) {
                     video = bootstrap[i]->create();
@@ -1833,6 +1838,7 @@ SDL_Window *SDL_CreateWindow(const char *title, int x, int y, int w, int h, Uint
 
     /* If the window was created fullscreen, make sure the mode code matches */
     SDL_UpdateFullscreenMode(window, FULLSCREEN_VISIBLE(window));
+                printf("hahahahah%d\n", __LINE__);
 
     return window;
 }

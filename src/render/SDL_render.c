@@ -124,6 +124,9 @@ static const SDL_RenderDriver *render_drivers[] = {
 #if SDL_VIDEO_RENDER_VITA_GXM
     &VITA_GXM_RenderDriver,
 #endif
+//#ifdef __profanOS__
+//    &PROFAN_RenderDriver,
+//#endif
 #if SDL_VIDEO_RENDER_SW
     &SW_RenderDriver
 #endif
@@ -958,7 +961,17 @@ SDL_Renderer *SDL_CreateRenderer(SDL_Window *window, int index, Uint32 flags)
 #if defined(__ANDROID__)
     Android_ActivityMutex_Lock_Running();
 #endif
-
+    #ifdef __profanOS__
+        flags = 0;
+        {
+            for (int i = 0; i < n; i++) {
+                if (!strcmp(render_drivers[i]->info.name, "software")) {
+                    index = i;
+                    break;
+                }
+            }
+        }
+    #endif
     if (!window) {
         SDL_InvalidParamError("window");
         goto error;

@@ -16,6 +16,13 @@
 		"math_libm.h": "c",
 		"math.h": "c",
 		"yuv_rgb.h": "c",
-		"yuv_rgb_std.h": "c"
+		"yuv_rgb_std.h": "c",
+		"stdlib.h": "c",
+		"sdl_timer_c.h": "c",
+		"profan.h": "c",
+		"typeinfo": "c",
+		"libmmq.h": "c",
+		"sdl_video.h": "c",
+		"sdl_sysvideo.h": "c"
 	}
 }

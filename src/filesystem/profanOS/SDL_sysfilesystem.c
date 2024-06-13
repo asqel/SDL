@@ -36,13 +36,8 @@ char *SDL_GetBasePath(void){
     // return dirname(abs_path())
     char *tmp = getenv("PWD");
     if (tmp == NULL) tmp = "/";
-    char *abs_path = strdup(tmp);
+    return strdup(tmp);
 
-    char *parent, *name;
-    fu_sep_path(abs_path, &parent, &name);
-    free(abs_path);
-    free(name);
-    return parent;
 }
 
 char *SDL_GetPrefPath(const char *org, const char *app) {
@@ -56,9 +51,9 @@ char *SDL_GetPrefPath(const char *org, const char *app) {
         strcat(full, app);
     }
     {
-        strcat(full, "/zada");
-        strcat(full, "/");
-        strcat(full, org);
+        strcat(half, "/zada");
+        strcat(half, "/");
+        strcat(half, org);
     }
     fu_dir_create(0, half);
     fu_dir_create(0, full);
