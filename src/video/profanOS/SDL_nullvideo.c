@@ -95,13 +95,11 @@ static SDL_VideoDevice *DUMMY_CreateDevice(void)
     }
 
     /* Initialize all variables that we clean on shutdown */
-    serial_debug("HIHIHI\n");
     device = (SDL_VideoDevice *)SDL_calloc(1, sizeof(SDL_VideoDevice));
     if (!device) {
         SDL_OutOfMemory();
         return 0;
     }
-    serial_debug("HIHIHI\n");
     device->is_dummy = SDL_TRUE;
 
     /* Set the function pointers */
