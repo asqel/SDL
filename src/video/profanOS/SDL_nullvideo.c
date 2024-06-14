@@ -86,6 +86,10 @@ static void DUMMY_DeleteDevice(SDL_VideoDevice *device)
     SDL_free(device);
 }
 
+void profan_handle_resize(SDL_VideoDevice *_this, SDL_Window *window) {
+
+}
+
 static SDL_VideoDevice *DUMMY_CreateDevice(void)
 {
     SDL_VideoDevice *device;
@@ -114,7 +118,7 @@ static SDL_VideoDevice *DUMMY_CreateDevice(void)
     device->CreateWindowFramebuffer = SDL_DUMMY_CreateWindowFramebuffer;
     device->UpdateWindowFramebuffer = SDL_DUMMY_UpdateWindowFramebuffer;
     device->DestroyWindowFramebuffer = SDL_DUMMY_DestroyWindowFramebuffer;
-
+    //device->SetWindowSize = profan_handle_resize;
     device->free = DUMMY_DeleteDevice;
 
     return device;

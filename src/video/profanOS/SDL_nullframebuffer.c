@@ -55,6 +55,7 @@ extern uint32_t *profan_fb;
 extern uint32_t profan_pitch;
 extern uint32_t profan_height;
 extern uint32_t profan_width;
+extern uint32_t *profan_back_fb;
 
 int SDL_DUMMY_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect *rects, int numrects)
 {
@@ -77,8 +78,13 @@ int SDL_DUMMY_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect 
         uint8_t *pixels = surface->pixels;
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
+                uint32_t co = x + y*profan_pitch;
                 uint32_t idx = x*4 + y *surface->pitch;
-                profan_fb[x + y*profan_pitch] = (pixels[idx]) | (pixels[idx + 1] << 8) | (pixels[idx + 2] << 16);
+                uint32_t pixel = (pixels[idx]) | (pixels[idx + 1] << 8) | (pixels[idx + 2] << 16);
+                if (profan_back_fb[co] != pixel) {
+                    profan_back_fb[co] = pixel;
+                    profan_fb[co] = pixel;
+                }
             }
         }
     }

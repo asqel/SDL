@@ -223,7 +223,7 @@ void PROFAN_PumpEvents(_THIS) {
                 default: ev.key.keysym.sym = PROFAN_char_to_sdl_key(c, scancode); break;
             }
         }
-        SDL_PushEvent(&ev);
+        int er = SDL_PushEvent(&ev);
         scancode = c_kb_get_scfh();
     }
 }

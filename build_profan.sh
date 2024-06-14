@@ -1,6 +1,6 @@
 profan_path="../profanOS"
 CFLAGS="-ffreestanding -fno-exceptions -m32 -I$profan_path/include/zlibs -I$profan_path/include/addons -O1 -nostdinc -U_WIN32 -U__linux__ -Iinclude -Isrc -D__profanOS__=1"
-#LDFLAGS="-m elf_i386 -nostdlib -L $profan_path/out/zlibs -T $profan_path/tools/link_elf.ld -lc"
+
 LDFLAGS="-shared -nostdlib -m32"
 LD=gcc
 CC=gcc

@@ -68,10 +68,17 @@ uint32_t profan_pitch;
 uint32_t profan_height;
 uint32_t profan_width;
 
+uint32_t *profan_back_fb; // use same pitch/h/w
+
 void __attribute__((constructor)) __profan_sdl_init(void) {
     setenv("SDL_VIDEODRIVER", "profan_vesa", 1);
     profan_fb = c_vesa_get_fb();
     profan_pitch = c_vesa_get_pitch();
     profan_height = c_vesa_get_height();
     profan_width = c_vesa_get_width();
+    profan_back_fb = calloc(profan_pitch * profan_height, 4);
+}
+
+void __attribute__((destructor)) __profan_sdl_exit(void) {
+    free(profan_back_fb);
 }
