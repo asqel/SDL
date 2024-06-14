@@ -105,7 +105,7 @@ static SDL_VideoDevice *DUMMY_CreateDevice(void)
     /* Set the function pointers */
     device->VideoInit = DUMMY_VideoInit;
     device->VideoQuit = DUMMY_VideoQuit;
-    device->PumpEvents = DUMMY_PumpEvents;
+    device->PumpEvents = PROFAN_PumpEvents;
 #ifdef SDL_INPUT_LINUXEV
     if (evdev) {
         device->PumpEvents = DUMMY_EVDEV_Poll;
