@@ -59,3 +59,4 @@
 #endif
 
 #endif /* SDL_config_h_ */
+
