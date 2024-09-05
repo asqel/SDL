@@ -101,8 +101,7 @@
 /* Enable the stub shared object loader (src/loadso/dummy/\*.c) */
 #define SDL_LOADSO_DISABLED 1
 
-/* Enable the stub thread support (src/thread/generic/\*.c) */
-#define SDL_THREADS_DISABLED    1
+#define SDL_THREADS_DISABLED
 
 /* Enable the stub timer support (src/timer/dummy/\*.c) */
 #undef SDL_TIMERS_DISABLED

@@ -19,49 +19,4 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 #include "../../SDL_internal.h"
-
-#ifdef __profanOS__
-
-#include "SDL_timer.h"
-#include <profan/syscall.h>
-#include <unistd.h>
-
-static char ticks_started = 0;
-static uint32_t start_time_ms = 0;
-
-void SDL_TicksInit(void) {
-    if (ticks_started) {
-        return;
-    }
-    ticks_started = 1;
-    start_time_ms = syscall_timer_get_ms();
-}
-
-void SDL_TicksQuit(void) {
-    ticks_started = 0;
-}
-
-Uint64 SDL_GetTicks64(void)
-{
-    if (!ticks_started) {
-        SDL_TicksInit();
-    }
-
-    return syscall_timer_get_ms() - start_time_ms;
-}
-
-Uint64 SDL_GetPerformanceCounter(void) {
-    return SDL_GetTicks();
-}
-
-Uint64 SDL_GetPerformanceFrequency(void) {
-    return 1000;
-}
-
-void SDL_Delay(Uint32 ms) {
-    usleep(ms);
-}
-
-#endif /* SDL_TIMER_DUMMY || SDL_TIMERS_DISABLED */
-
 /* vi: set ts=4 sw=4 expandtab: */

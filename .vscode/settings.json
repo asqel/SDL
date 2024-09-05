@@ -23,6 +23,9 @@
 		"typeinfo": "c",
 		"libmmq.h": "c",
 		"sdl_video.h": "c",
-		"sdl_sysvideo.h": "c"
+		"sdl_sysvideo.h": "c",
+		"sdl_thread.h": "c",
+		"unistd.h": "c",
+		"sdl_systhread_c.h": "c"
 	}
 }

@@ -20,48 +20,51 @@
 */
 #include "../../SDL_internal.h"
 
-#ifdef __profanOS__
+/* Thread management routines for SDL */
 
-#include "SDL_timer.h"
-#include <profan/syscall.h>
+#include "SDL_thread.h"
+#include "../SDL_systhread.h"
 #include <unistd.h>
+#include <profan/syscall.h>
 
-static char ticks_started = 0;
-static uint32_t start_time_ms = 0;
-
-void SDL_TicksInit(void) {
-    if (ticks_started) {
-        return;
-    }
-    ticks_started = 1;
-    start_time_ms = syscall_timer_get_ms();
-}
-
-void SDL_TicksQuit(void) {
-    ticks_started = 0;
-}
-
-Uint64 SDL_GetTicks64(void)
+#ifdef SDL_PASSED_BEGINTHREAD_ENDTHREAD
+int SDL_SYS_CreateThread(SDL_Thread *thread,
+                         pfnSDL_CurrentBeginThread pfnBeginThread,
+                         pfnSDL_CurrentEndThread pfnEndThread)
+#else
+int SDL_SYS_CreateThread(SDL_Thread *thread)
+#endif /* SDL_PASSED_BEGINTHREAD_ENDTHREAD */
 {
-    if (!ticks_started) {
-        SDL_TicksInit();
+    pid_t fk = fork();
+    if (fk == 0) {
+        exit((*(thread->userfunc))(thread->data));
     }
-
-    return syscall_timer_get_ms() - start_time_ms;
+    return fk;
 }
 
-Uint64 SDL_GetPerformanceCounter(void) {
-    return SDL_GetTicks();
+void SDL_SYS_SetupThread(const char *name)
+{
+    return;
 }
 
-Uint64 SDL_GetPerformanceFrequency(void) {
-    return 1000;
+SDL_threadID SDL_ThreadID(void)
+{
+    return (SDL_threadID)getpid();
 }
 
-void SDL_Delay(Uint32 ms) {
-    usleep(ms);
+int SDL_SYS_SetThreadPriority(SDL_ThreadPriority priority)
+{
+    return 0;
 }
 
-#endif /* SDL_TIMER_DUMMY || SDL_TIMERS_DISABLED */
+void SDL_SYS_WaitThread(SDL_Thread *thread)
+{
+    return;
+}
+
+void SDL_SYS_DetachThread(SDL_Thread *thread)
+{
+    return;
+}
 
 /* vi: set ts=4 sw=4 expandtab: */

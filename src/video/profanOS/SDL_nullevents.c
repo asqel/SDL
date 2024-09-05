@@ -144,7 +144,7 @@ uint32_t PROFAN_sc_to_sdl_key_spe(uint32_t scancode) {
 }
 
 void PROFAN_PumpEvents(_THIS) {
-    int scancode = c_kb_get_scfh();
+    int scancode = syscall_sc_get();
     SDL_Event ev = {0};
     ev.key.keysym.mod = KMOD_NONE;
     if (key_shift_state & 0)
@@ -179,7 +179,7 @@ void PROFAN_PumpEvents(_THIS) {
             key_shift_state &= 0b01;
         }
         else if (scancode == 0xE0) {
-            int scancode2 = c_kb_get_scfh();
+            int scancode2 = syscall_sc_get();
             ev.key.keysym.scancode = 0xE000 | scancode2;
             ev.type = scancode2 < 0x80 ? SDL_KEYDOWN : SDL_KEYUP;
             if (scancode2 >= 81)
@@ -224,7 +224,7 @@ void PROFAN_PumpEvents(_THIS) {
             }
         }
         int er = SDL_PushEvent(&ev);
-        scancode = c_kb_get_scfh();
+        scancode = syscall_sc_get();
     }
 }
 

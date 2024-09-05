@@ -20,48 +20,23 @@
 */
 #include "../../SDL_internal.h"
 
-#ifdef __profanOS__
+#include "SDL_thread.h"
 
-#include "SDL_timer.h"
-#include <profan/syscall.h>
-#include <unistd.h>
+#ifndef SDL_syscond_generic_h_
+#define SDL_syscond_generic_h_
 
-static char ticks_started = 0;
-static uint32_t start_time_ms = 0;
+#ifdef SDL_THREAD_GENERIC_COND_SUFFIX
 
-void SDL_TicksInit(void) {
-    if (ticks_started) {
-        return;
-    }
-    ticks_started = 1;
-    start_time_ms = syscall_timer_get_ms();
-}
+SDL_cond *SDL_CreateCond_generic(void);
+void SDL_DestroyCond_generic(SDL_cond *cond);
+int SDL_CondSignal_generic(SDL_cond *cond);
+int SDL_CondBroadcast_generic(SDL_cond *cond);
+int SDL_CondWait_generic(SDL_cond *cond, SDL_mutex *mutex);
+int SDL_CondWaitTimeout_generic(SDL_cond *cond,
+                                SDL_mutex *mutex, Uint32 ms);
 
-void SDL_TicksQuit(void) {
-    ticks_started = 0;
-}
+#endif /* SDL_THREAD_GENERIC_COND_SUFFIX */
 
-Uint64 SDL_GetTicks64(void)
-{
-    if (!ticks_started) {
-        SDL_TicksInit();
-    }
-
-    return syscall_timer_get_ms() - start_time_ms;
-}
-
-Uint64 SDL_GetPerformanceCounter(void) {
-    return SDL_GetTicks();
-}
-
-Uint64 SDL_GetPerformanceFrequency(void) {
-    return 1000;
-}
-
-void SDL_Delay(Uint32 ms) {
-    usleep(ms);
-}
-
-#endif /* SDL_TIMER_DUMMY || SDL_TIMERS_DISABLED */
+#endif /* SDL_syscond_generic_h_ */
 
 /* vi: set ts=4 sw=4 expandtab: */
