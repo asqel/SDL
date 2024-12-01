@@ -59,7 +59,7 @@ Uint64 SDL_GetPerformanceFrequency(void) {
 }
 
 void SDL_Delay(Uint32 ms) {
-    usleep(ms);
+    usleep(ms * 1000);
 }
 
 #endif /* SDL_TIMER_DUMMY || SDL_TIMERS_DISABLED */
