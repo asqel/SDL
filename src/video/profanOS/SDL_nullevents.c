@@ -148,9 +148,9 @@ void PROFAN_PumpEvents(_THIS) {
     SDL_Event ev = {0};
     ev.key.keysym.mod = KMOD_NONE;
     if (key_shift_state & 0)
-        ev.key.keysym.mod |= KMOD_LSHIFT; 
+        ev.key.keysym.mod |= KMOD_LSHIFT;
     if (key_shift_state & 0b10)
-        ev.key.keysym.mod |= KMOD_RSHIFT; 
+        ev.key.keysym.mod |= KMOD_RSHIFT;
     while (scancode) {
         if (scancode == 42) { // l ctrl down
             ev.key.keysym.scancode = scancode;
@@ -185,7 +185,7 @@ void PROFAN_PumpEvents(_THIS) {
             if (scancode2 >= 81)
                 scancode2 -= 0x80;
             ev.key.keysym.sym = PROFAN_sc_to_sdl_key_spe(scancode2);
-            
+
         }
         else {
             ev.type = scancode < 0x80 ? SDL_KEYDOWN : SDL_KEYUP;
@@ -226,6 +226,65 @@ void PROFAN_PumpEvents(_THIS) {
         int er = SDL_PushEvent(&ev);
         scancode = syscall_sc_get();
     }
+
+    static int mouse_lastx = -1;
+    static int mouse_lasty = -1;
+    static int last_buttons[3] = {0};
+
+    if (mouse_lastx == -1 || mouse_lasty == -1) {
+        mouse_lastx = syscall_mouse_call(0, 0);
+        mouse_lasty = syscall_mouse_call(1, 0);
+    }
+
+    int mouse_x = syscall_mouse_call(0, 0);
+    int mouse_y = syscall_mouse_call(1, 0);
+    int mouse_buttons[3] = {syscall_mouse_call(2, 0), syscall_mouse_call(2, 2), syscall_mouse_call(2, 1)};
+    if (mouse_x != mouse_lastx || mouse_y != mouse_lasty) {
+        ev = (SDL_Event){0};
+        ev.type = SDL_MOUSEMOTION;
+        ev.motion.x = mouse_x;
+        ev.motion.y = mouse_y;
+        ev.motion.xrel = mouse_x - mouse_lastx;
+        ev.motion.yrel = mouse_y - mouse_lasty;
+        ev.motion.state = 0;
+        if (mouse_buttons[0])
+            ev.motion.state |= SDL_BUTTON_LMASK;
+        if (mouse_buttons[1])
+            ev.motion.state |= SDL_BUTTON_MMASK;
+        if (mouse_buttons[2])
+            ev.motion.state |= SDL_BUTTON_RMASK;
+        SDL_PushEvent(&ev);
+        mouse_lastx = mouse_x;
+        mouse_lasty = mouse_y;
+    }
+    if (mouse_buttons[0] != last_buttons[0]) {
+        ev = (SDL_Event){0};
+        ev.type = mouse_buttons[0] ? SDL_MOUSEBUTTONDOWN : SDL_MOUSEBUTTONUP;
+        ev.button.button = SDL_BUTTON_LEFT;
+        ev.button.x = mouse_x;
+        ev.button.y = mouse_y;
+        SDL_PushEvent(&ev);
+        last_buttons[0] = mouse_buttons[0];
+    }
+    if (mouse_buttons[1] != last_buttons[1]) {
+        ev = (SDL_Event){0};
+        ev.type = mouse_buttons[1] ? SDL_MOUSEBUTTONDOWN : SDL_MOUSEBUTTONUP;
+        ev.button.button = SDL_BUTTON_MIDDLE;
+        ev.button.x = mouse_x;
+        ev.button.y = mouse_y;
+        SDL_PushEvent(&ev);
+        last_buttons[1] = mouse_buttons[1];
+    }
+    if (mouse_buttons[2] != last_buttons[2]) {
+        ev = (SDL_Event){0};
+        ev.type = mouse_buttons[2] ? SDL_MOUSEBUTTONDOWN : SDL_MOUSEBUTTONUP;
+        ev.button.button = SDL_BUTTON_RIGHT;
+        ev.button.x = mouse_x;
+        ev.button.y = mouse_y;
+        SDL_PushEvent(&ev);
+        last_buttons[2] = mouse_buttons[2];
+    }
+
 }
 
 #endif /* SDL_VIDEO_DRIVER_DUMMY */
