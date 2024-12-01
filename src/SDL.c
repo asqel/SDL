@@ -185,6 +185,11 @@ int SDL_InitSubSystem(Uint32 flags)
 {
     Uint32 flags_initialized = 0;
 
+    #if defined(__profanOS__)
+        extern void __profan_sdl_init(void);
+        __profan_sdl_init();
+    #endif
+
     if (!SDL_MainIsReady) {
         return SDL_SetError("Application didn't initialize properly, did you include SDL_main.h in the file containing your main() function?");
     }
