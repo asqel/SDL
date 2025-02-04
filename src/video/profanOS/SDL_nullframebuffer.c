@@ -80,7 +80,7 @@ int SDL_DUMMY_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect 
             for (int y = 0; y < height; y++) {
                 uint32_t co = x + y*profan_pitch;
                 uint32_t idx = x*4 + y *surface->pitch;
-                uint32_t pixel = (pixels[idx]) | (pixels[idx + 1] << 8) | (pixels[idx + 2] << 16);
+                uint32_t pixel = (pixels[idx]) | ((uint32_t)pixels[idx + 1] << 8) | ((uint32_t)pixels[idx + 2] << 16);
                 if (profan_back_fb[co] != pixel) {
                     profan_back_fb[co] = pixel;
                     profan_fb[co] = pixel;

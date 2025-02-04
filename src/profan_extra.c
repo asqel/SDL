@@ -84,7 +84,6 @@ void __profan_sdl_init(void) {
     profan_height = syscall_vesa_height();
     profan_width = syscall_vesa_width();
     profan_back_fb = calloc(profan_pitch * profan_height, 4);
-    atexit(&__profan_sdl_exit);
     if (getenv("SDL_NEED_MOUSE") != NULL) {
         run_ifexist_full(
             (runtime_args_t) {
@@ -99,6 +98,7 @@ void __profan_sdl_init(void) {
     }
 }
 
+__attribute__((destructor))
 void __profan_sdl_exit(void) {
     free(profan_back_fb);
     panda_screen_restore(old_screen);
