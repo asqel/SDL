@@ -94,7 +94,7 @@ void __profan_sdl_init(void) {
                 .path = "/bin/games/mouse.elf",
                 .sleep_mode = 0,
                 .wd = NULL
-            }
+            }, NULL
         );
     }
 }
