@@ -4,8 +4,8 @@
             "name": "profanOS",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/../profanOS/include/zlibs/**",
-                "${workspaceFolder}/../profanOS/include/addons/**"
+                "${workspaceFolder}/../profanos/include/zlibs/**",
+                "${workspaceFolder}/../profanos/include/addons/**"
             ],
             "defines": [
                 "_DEBUG",

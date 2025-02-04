@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <profan/syscall.h>
+#include <profan/panda.h>
+#include <profan.h>
+
 int64_t __divdi3(int64_t num, int64_t den) {
     return (int64_t) (((int32_t)num) / ((int32_t)den));
 }
@@ -70,8 +73,11 @@ uint32_t profan_width;
 
 uint32_t *profan_back_fb; // use same pitch/h/w
 
+static void *old_screen = NULL;
+
 void __profan_sdl_exit(void);
 void __profan_sdl_init(void) {
+    old_screen = panda_screen_backup();
     setenv("SDL_VIDEODRIVER", "profan_vesa", 1);
     profan_fb = syscall_vesa_fb();
     profan_pitch = syscall_vesa_pitch();
@@ -79,8 +85,22 @@ void __profan_sdl_init(void) {
     profan_width = syscall_vesa_width();
     profan_back_fb = calloc(profan_pitch * profan_height, 4);
     atexit(&__profan_sdl_exit);
+    if (getenv("SDL_NEED_MOUSE") != NULL) {
+        run_ifexist_full(
+            (runtime_args_t) {
+                .argc = 1,
+                .argv = (char*[]){"/bin/games/mouse.elf", NULL},
+                .envp = environ,
+                .path = "/bin/games/mouse.elf",
+                .sleep_mode = 0,
+                .wd = NULL
+            }
+        );
+    }
 }
 
 void __profan_sdl_exit(void) {
     free(profan_back_fb);
+    panda_screen_restore(old_screen);
+    panda_screen_free(old_screen);
 }

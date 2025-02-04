@@ -151,32 +151,27 @@ void PROFAN_PumpEvents(_THIS) {
         ev.key.keysym.mod |= KMOD_LSHIFT;
     if (key_shift_state & 0b10)
         ev.key.keysym.mod |= KMOD_RSHIFT;
+    SDL_Event ev2 = {0};
     while (scancode) {
-        if (scancode == 42) { // l ctrl down
+        if (scancode == 1) {
+            ev.type = SDL_QUIT;
+            SDL_PushEvent(&ev);
+            scancode = syscall_sc_get();
+            continue;
+        }
+        ev2.type = 0;
+        if (scancode == 29) { // l ctrl down
             ev.key.keysym.scancode = scancode;
             ev.type = SDL_KEYDOWN;
             ev.key.keysym.sym = SDLK_LCTRL;
             key_shift_state |= 0b01;
             ev.key.keysym.mod |= KMOD_LCTRL;
         }
-        else if (scancode == 170) { // l ctrl up
+        else if (scancode == 157) { // l ctrl up
             ev.key.keysym.scancode = scancode;
             ev.type = SDL_KEYUP;
             ev.key.keysym.sym = SDLK_LCTRL;
             key_shift_state &= 0b10;
-        }
-        if (scancode == 54) { // r ctrl down
-            ev.key.keysym.scancode = scancode;
-            ev.type = SDL_KEYDOWN;
-            ev.key.keysym.sym = SDLK_RCTRL;
-            key_shift_state |= 0b10;
-            ev.key.keysym.mod |= KMOD_RCTRL;
-        }
-        else if (scancode == 182) { // r ctrl up
-            ev.key.keysym.scancode = scancode;
-            ev.type = SDL_KEYUP;
-            ev.key.keysym.sym = SDLK_RCTRL;
-            key_shift_state &= 0b01;
         }
         else if (scancode == 0xE0) {
             int scancode2 = syscall_sc_get();
@@ -222,9 +217,19 @@ void PROFAN_PumpEvents(_THIS) {
                 case 0x53: ev.key.keysym.sym = SDLK_KP_PERIOD; break;
                 default: ev.key.keysym.sym = PROFAN_char_to_sdl_key(c, scancode); break;
             }
+            if (c != 0 && ev.type == SDL_KEYDOWN) {
+                ev2.type = SDL_TEXTINPUT;
+                ev2.text.text[0] = c;
+                ev2.text.text[1] = '\0';
+                ev2.text.type = SDL_TEXTINPUT;
+                ev2.text.windowID = 0;
+                ev2.text.timestamp = 0;
+            }
         }
         int er = SDL_PushEvent(&ev);
         scancode = syscall_sc_get();
+        if (ev2.type != 0)
+            SDL_PushEvent(&ev2);
     }
 
     static int mouse_lastx = -1;
@@ -238,6 +243,11 @@ void PROFAN_PumpEvents(_THIS) {
 
     int mouse_x = syscall_mouse_call(0, 0);
     int mouse_y = syscall_mouse_call(1, 0);
+
+    SDL_Mouse *mouse = SDL_GetMouse();
+    mouse->x = mouse_x;
+    mouse->y = mouse_y;
+
     int mouse_buttons[3] = {syscall_mouse_call(2, 0), syscall_mouse_call(2, 2), syscall_mouse_call(2, 1)};
     if (mouse_x != mouse_lastx || mouse_y != mouse_lasty) {
         ev = (SDL_Event){0};
