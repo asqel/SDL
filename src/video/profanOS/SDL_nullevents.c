@@ -221,13 +221,15 @@ void PROFAN_PumpEvents(_THIS) {
             ev.key.keysym.scancode = scancode;
             ev.type = SDL_KEYDOWN;
             ev.key.keysym.sym = SDLK_CAPSLOCK;
-            key_mod_state |= KMOD_CAPS;
+            if (key_mod_state & KMOD_CAPS)
+                key_mod_state &= ~KMOD_CAPS;
+            else
+                key_mod_state |= KMOD_CAPS;
         }
         else if (scancode == 0xba) { // caps lock up
             ev.key.keysym.scancode = scancode;
             ev.type = SDL_KEYUP;
             ev.key.keysym.sym = SDLK_CAPSLOCK;
-            key_mod_state &= ~KMOD_CAPS;
         }
         else if (scancode == 0xE0) {
             int scancode2 = syscall_sc_get();
