@@ -217,6 +217,21 @@ void PROFAN_PumpEvents(_THIS) {
             ev.type = SDL_KEYUP;
             ev.key.keysym.sym = SDLK_TAB;
         }
+        else if (scancode == 0x1c) { // enter down
+            ev.key.keysym.scancode = scancode;
+            ev.type = SDL_KEYDOWN;
+            ev.key.keysym.sym = SDLK_RETURN;
+            ev2.type = SDL_TEXTINPUT;
+            ev2.text.text[0] = '\n';
+            ev2.text.text[1] = '\0';
+            ev2.text.windowID = 0;
+            ev2.text.timestamp = SDL_GetTicks();
+        }
+        else if (scancode == 0x9c) { // enter up
+            ev.key.keysym.scancode = scancode;
+            ev.type = SDL_KEYUP;
+            ev.key.keysym.sym = SDLK_RETURN;
+        }
         else if (scancode == 0x3a) { // caps lock down
             ev.key.keysym.scancode = scancode;
             ev.type = SDL_KEYDOWN;
