@@ -33,7 +33,8 @@
 #include <profan.h>
 
 
-static int key_shift_state = 0; // bit 0 is for left 1 right
+static uint32_t key_mod_state = 0;
+static uint8_t is_escape_pressed = 0;
 static uint32_t ab019_array[] = {
     SDLK_a,
     SDLK_b,
@@ -147,31 +148,85 @@ void PROFAN_PumpEvents(_THIS) {
     int scancode = syscall_sc_get();
     SDL_Event ev = {0};
     ev.key.keysym.mod = KMOD_NONE;
-    if (key_shift_state & 0)
-        ev.key.keysym.mod |= KMOD_LSHIFT;
-    if (key_shift_state & 0b10)
-        ev.key.keysym.mod |= KMOD_RSHIFT;
     SDL_Event ev2 = {0};
     while (scancode) {
-        if (scancode == 1) {
-            ev.type = SDL_QUIT;
-            SDL_PushEvent(&ev);
-            scancode = syscall_sc_get();
-            continue;
-        }
         ev2.type = 0;
-        if (scancode == 29) { // l ctrl down
+        if (scancode == 1) {
+            is_escape_pressed = 1;
+            ev.key.keysym.scancode = scancode;
+            ev.type = SDL_KEYDOWN;
+            ev.key.keysym.sym = SDLK_ESCAPE;
+            ev.key.keysym.mod = key_mod_state;
+        }
+        else if (scancode == 0x81) {
+            is_escape_pressed = 0;
+            ev.key.keysym.scancode = scancode;
+            ev.type = SDL_KEYUP;
+            ev.key.keysym.sym = SDLK_ESCAPE;
+            ev.key.keysym.mod = key_mod_state;
+        }
+        else if (scancode == 29) { // l ctrl down
             ev.key.keysym.scancode = scancode;
             ev.type = SDL_KEYDOWN;
             ev.key.keysym.sym = SDLK_LCTRL;
-            key_shift_state |= 0b01;
-            ev.key.keysym.mod |= KMOD_LCTRL;
+            key_mod_state |= KMOD_LCTRL;
         }
         else if (scancode == 157) { // l ctrl up
             ev.key.keysym.scancode = scancode;
             ev.type = SDL_KEYUP;
             ev.key.keysym.sym = SDLK_LCTRL;
-            key_shift_state &= 0b10;
+            key_mod_state &= ~KMOD_LCTRL;
+        }
+        else if (scancode == 42) { // l shift down
+            ev.key.keysym.scancode = scancode;
+            ev.type = SDL_KEYDOWN;
+            ev.key.keysym.sym = SDLK_LSHIFT;
+            key_mod_state |= KMOD_LSHIFT;
+        }
+        else if (scancode == 170) { // l shift up
+            ev.key.keysym.scancode = scancode;
+            ev.type = SDL_KEYUP;
+            ev.key.keysym.sym = SDLK_LSHIFT;
+            key_mod_state &= ~KMOD_LSHIFT;
+        }
+        else if (scancode == 0x36) { // r shift down
+            ev.key.keysym.scancode = scancode;
+            ev.type = SDL_KEYDOWN;
+            ev.key.keysym.sym = SDLK_RSHIFT;
+            key_mod_state |= KMOD_RSHIFT;
+        }
+        else if (scancode == 0xb6) { // r shift up
+            ev.key.keysym.scancode = scancode;
+            ev.type = SDL_KEYUP;
+            ev.key.keysym.sym = SDLK_RSHIFT;
+            key_mod_state &= ~KMOD_RSHIFT;
+        }
+        else if (scancode == 0x0f) { // tab down
+            ev.key.keysym.scancode = scancode;
+            ev.type = SDL_KEYDOWN;
+            ev.key.keysym.sym = SDLK_TAB;
+            ev2.type = SDL_TEXTINPUT;
+            ev2.text.text[0] = '\t';
+            ev2.text.text[1] = '\0';
+            ev2.text.windowID = 0;
+            ev2.text.timestamp = SDL_GetTicks();
+        }
+        else if (scancode == 0x8f) { // tab up
+            ev.key.keysym.scancode = scancode;
+            ev.type = SDL_KEYUP;
+            ev.key.keysym.sym = SDLK_TAB;
+        }
+        else if (scancode == 0x3a) { // caps lock down
+            ev.key.keysym.scancode = scancode;
+            ev.type = SDL_KEYDOWN;
+            ev.key.keysym.sym = SDLK_CAPSLOCK;
+            key_mod_state |= KMOD_CAPS;
+        }
+        else if (scancode == 0xba) { // caps lock up
+            ev.key.keysym.scancode = scancode;
+            ev.type = SDL_KEYUP;
+            ev.key.keysym.sym = SDLK_CAPSLOCK;
+            key_mod_state &= ~KMOD_CAPS;
         }
         else if (scancode == 0xE0) {
             int scancode2 = syscall_sc_get();
@@ -186,7 +241,7 @@ void PROFAN_PumpEvents(_THIS) {
             ev.type = scancode < 0x80 ? SDL_KEYDOWN : SDL_KEYUP;
             if (scancode >= 0x81)
                 scancode -= 0x80;
-            char c = profan_kb_get_char(scancode, 0);
+            char c = profan_kb_get_char(scancode, key_mod_state & KMOD_CAPS || key_mod_state &KMOD_LSHIFT || key_mod_state & KMOD_RSHIFT);
             ev.key.keysym.scancode = scancode;
             switch (scancode >= 81 ? scancode - 0x80 : scancode) {
                 case 0x3B: ev.key.keysym.sym = SDLK_F1; break;
@@ -223,13 +278,19 @@ void PROFAN_PumpEvents(_THIS) {
                 ev2.text.text[1] = '\0';
                 ev2.text.type = SDL_TEXTINPUT;
                 ev2.text.windowID = 0;
-                ev2.text.timestamp = 0;
+                ev2.text.timestamp = SDL_GetTicks();
             }
         }
+        ev.key.keysym.mod = key_mod_state;
         int er = SDL_PushEvent(&ev);
         scancode = syscall_sc_get();
         if (ev2.type != 0)
             SDL_PushEvent(&ev2);
+    }
+    if (is_escape_pressed && ((key_mod_state & KMOD_LCTRL) || (key_mod_state & KMOD_RCTRL))) {
+        ev.type = SDL_QUIT;
+        SDL_PushEvent(&ev);
+        scancode = syscall_sc_get();
     }
 
     static int mouse_lastx = -1;
