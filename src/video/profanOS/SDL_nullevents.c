@@ -31,6 +31,7 @@
 #include "SDL_nullevents_c.h"
 #include <profan/syscall.h>
 #include <profan.h>
+#include "SDL_timer.h"
 
 
 static uint32_t key_mod_state = 0;
