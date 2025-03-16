@@ -49,6 +49,7 @@
 #include "SDL_hints.h"
 
 #include <profan.h>
+#include <profan/syscall.h>
 
 #define PROFANOSVID_DRIVER_NAME       "profan_vesa"
 #define DUMMYVID_DRIVER_EVDEV_NAME "evdev"
@@ -153,8 +154,8 @@ int DUMMY_VideoInit(_THIS)
     /* Use a fake 32-bpp desktop mode */
     SDL_zero(mode);
     mode.format = SDL_PIXELFORMAT_RGB888;
-    mode.w = 1024;
-    mode.h = 768;
+    mode.w = syscall_vesa_width();
+    mode.h = syscall_vesa_height();
     mode.refresh_rate = 0;
     mode.driverdata = NULL;
     if (SDL_AddBasicVideoDisplay(&mode) < 0) {
