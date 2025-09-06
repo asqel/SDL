@@ -85,16 +85,15 @@ void __profan_sdl_init(void) {
     profan_width = syscall_vesa_width();
     profan_back_fb = calloc(profan_pitch * profan_height, 4);
     if (getenv("SDL_NEED_MOUSE") != NULL) {
-        run_ifexist_full(
-            (runtime_args_t) {
-                .argc = 1,
-                .argv = (char*[]){"/bin/games/mouse.elf", NULL},
-                .envp = environ,
-                .path = "/bin/games/mouse.elf",
-                .sleep_mode = 0,
-                .wd = NULL
-            }, NULL
-        );
+        runtime_args_t run_args = {
+            .path = "/bin/games/mouse.elf",
+            .wd = NULL,
+            .argc = 1,
+            .argv = (char*[]){"/bin/games/mouse.elf", NULL},
+            .envp = environ,
+            .sleep_mode = 0
+        };
+        run_ifexist(&run_args, NULL);
     }
 }
 
