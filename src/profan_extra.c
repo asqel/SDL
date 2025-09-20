@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <profan/syscall.h>
-#include <profan/panda.h>
+#include <modules/panda.h>
 #include <profan.h>
 
 int64_t __divdi3(int64_t num, int64_t den) {

@@ -30,7 +30,7 @@
 #include "SDL_nullvideo.h"
 #include "SDL_nullevents_c.h"
 #include <profan/syscall.h>
-#include <profan/mouse.h>
+#include <modules/mouse.h>
 #include <profan.h>
 #include "SDL_timer.h"
 
