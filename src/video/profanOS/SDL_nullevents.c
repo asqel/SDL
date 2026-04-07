@@ -30,6 +30,7 @@
 #include "SDL_nullvideo.h"
 #include "SDL_nullevents_c.h"
 #include <profan/syscall.h>
+#include <modules/mouse.h>
 #include <profan.h>
 #include "SDL_timer.h"
 
@@ -316,18 +317,18 @@ void PROFAN_PumpEvents(_THIS) {
     static int last_buttons[3] = {0};
 
     if (mouse_lastx == -1 || mouse_lasty == -1) {
-        mouse_lastx = syscall_mouse_call(0, 0);
-        mouse_lasty = syscall_mouse_call(1, 0);
+        mouse_lastx = mouse_get_x();
+        mouse_lasty = mouse_get_y();
     }
 
-    int mouse_x = syscall_mouse_call(0, 0);
-    int mouse_y = syscall_mouse_call(1, 0);
+    int mouse_x = mouse_get_x();
+    int mouse_y = mouse_get_y();
 
     SDL_Mouse *mouse = SDL_GetMouse();
     mouse->x = mouse_x;
     mouse->y = mouse_y;
 
-    int mouse_buttons[3] = {syscall_mouse_call(2, 0), syscall_mouse_call(2, 2), syscall_mouse_call(2, 1)};
+    int mouse_buttons[3] = {mouse_get_button(0), mouse_get_button(2), mouse_get_button(1)};
     if (mouse_x != mouse_lastx || mouse_y != mouse_lasty) {
         ev = (SDL_Event){0};
         ev.type = SDL_MOUSEMOTION;

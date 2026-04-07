@@ -34,7 +34,7 @@ void SDL_TicksInit(void) {
         return;
     }
     ticks_started = 1;
-    start_time_ms = syscall_timer_get_ms();
+    start_time_ms = syscall_ms_get();
 }
 
 void SDL_TicksQuit(void) {
@@ -47,7 +47,7 @@ Uint64 SDL_GetTicks64(void)
         SDL_TicksInit();
     }
 
-    return syscall_timer_get_ms() - start_time_ms;
+    return syscall_ms_get() - start_time_ms;
 }
 
 Uint64 SDL_GetPerformanceCounter(void) {

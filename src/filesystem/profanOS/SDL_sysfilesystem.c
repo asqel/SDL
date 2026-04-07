@@ -27,7 +27,7 @@
 
 #include "SDL_error.h"
 #include "SDL_filesystem.h"
-#include <profan/filesys.h>
+#include <modules/filesys.h>
 #include <profan/syscall.h>
 #include <stdlib.h>
 #include <string.h>
