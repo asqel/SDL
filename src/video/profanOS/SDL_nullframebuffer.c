@@ -56,6 +56,24 @@ extern uint32_t profan_pitch;
 extern uint32_t profan_height;
 extern uint32_t profan_width;
 extern uint32_t *profan_back_fb;
+extern int profan_simd_state;
+
+static void copy_pixels(uint32_t *pixels, uint32_t width, uint32_t height, uint32_t pitch) {
+	if (profan_simd_state == 0) {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                uint32_t co = x + y*profan_pitch;
+                uint32_t idx = x + y * surface->pitch;
+                uint32_t pixel = (pixels[idx]) | ((uint32_t)pixels[idx + 1] << 8) | ((uint32_t)pixels[idx + 2] << 16);
+                if (profan_back_fb[co] != pixel) {
+                    profan_back_fb[co] = pixel;
+                    profan_fb[co] = pixel;
+                }
+            }
+        }
+
+	}
+}
 
 int SDL_DUMMY_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect *rects, int numrects)
 {
@@ -76,17 +94,7 @@ int SDL_DUMMY_UpdateWindowFramebuffer(_THIS, SDL_Window *window, const SDL_Rect 
         if (profan_height < height)
             height = profan_height;
         uint8_t *pixels = surface->pixels;
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                uint32_t co = x + y*profan_pitch;
-                uint32_t idx = x*4 + y *surface->pitch;
-                uint32_t pixel = (pixels[idx]) | ((uint32_t)pixels[idx + 1] << 8) | ((uint32_t)pixels[idx + 2] << 16);
-                if (profan_back_fb[co] != pixel) {
-                    profan_back_fb[co] = pixel;
-                    profan_fb[co] = pixel;
-                }
-            }
-        }
+		copy_pixels(pixels, width, height, surface->pitch);
     }
     return 0;
 }

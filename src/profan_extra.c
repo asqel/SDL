@@ -5,6 +5,7 @@
 #include <profan/syscall.h>
 #include <profan/panda.h>
 #include <profan.h>
+#include <cpuid.h>
 
 int64_t __divdi3(int64_t num, int64_t den) {
     return (int64_t) (((int32_t)num) / ((int32_t)den));
@@ -76,6 +77,24 @@ uint32_t *profan_back_fb; // use same pitch/h/w
 static void *old_screen = NULL;
 
 void __profan_sdl_exit(void);
+
+int profan_simd_state = 0;
+
+static void get_cpuid(int leaf, int *eax, int *ebx, int *ecx, int *edx) {
+	__get_cpuid(leaf, eax, ebx, ecx, edx);
+}
+
+static void check_simd() {
+	uint32_t eax;
+	uint32_t ebx;
+	uint32_t ecx;
+	uint32_t edx;
+	get_cpuid(1, &eax, &ebx, &ecx, &edx);
+	if ((ecx >> 28) & 1)
+		profan_simd_state;
+
+}
+
 void __profan_sdl_init(void) {
     old_screen = panda_screen_backup();
     setenv("SDL_VIDEODRIVER", "profan_vesa", 1);
@@ -95,6 +114,7 @@ void __profan_sdl_init(void) {
         };
         run_ifexist(&run_args, NULL);
     }
+	check_simd();
 }
 
 __attribute__((destructor))
