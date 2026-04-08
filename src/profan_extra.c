@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <profan/syscall.h>
-#include <profan/panda.h>
+#include <modules/panda.h>
 #include <profan.h>
 #include <cpuid.h>
 
